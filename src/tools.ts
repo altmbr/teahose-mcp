@@ -4,8 +4,16 @@ import { apiGet, apiPost } from './client.js'
 import { fmtFunding, fmtCompany, fmtBuzz, fmtMatches, fmtThemes, fmtCheck, fmtWatch } from './format.js'
 
 const text = (t: string) => ({ content: [{ type: 'text' as const, text: t }] })
-function errText(e: unknown) {
-  return text(e instanceof Error ? e.message : 'Teahose API request failed.')
+
+// Wrap a tool handler so any thrown error (API/network/parse) becomes a clean text reply.
+function safe<A>(handler: (args: A) => Promise<string>) {
+  return async (args: A) => {
+    try {
+      return text(await handler(args))
+    } catch (e) {
+      return text(e instanceof Error ? e.message : 'Teahose API request failed.')
+    }
+  }
 }
 
 export function registerTools(server: McpServer): void {
@@ -17,13 +25,9 @@ export function registerTools(server: McpServer): void {
         'Vector search over the Teahose AI-company intel graph. Pass a company website URL (competitor scan) OR a plain-text description like "seed-stage robot foundation model startups" (ICP / sourcing). Returns ranked similar companies with similarity scores.',
       inputSchema: { query: z.string().min(2).max(2000).describe('Company website URL or a text description of the kind of company to find') },
     },
-    async ({ query }) => {
-      try {
-        return text(fmtMatches((await apiPost('/find-companies', { query })) as Parameters<typeof fmtMatches>[0]))
-      } catch (e) {
-        return errText(e)
-      }
-    }
+    safe(async ({ query }) =>
+      fmtMatches((await apiPost('/find-companies', { query })) as Parameters<typeof fmtMatches>[0])
+    )
   )
 
   server.registerTool(
@@ -37,13 +41,9 @@ export function registerTools(server: McpServer): void {
         days: z.number().int().min(1).max(90).optional().describe('Lookback window in days (default 30)'),
       },
     },
-    async ({ company, days }) => {
-      try {
-        return text(fmtBuzz((await apiGet('/company-buzz', { name: company, days })) as Parameters<typeof fmtBuzz>[0]))
-      } catch (e) {
-        return errText(e)
-      }
-    }
+    safe(async ({ company, days }) =>
+      fmtBuzz((await apiGet('/company-buzz', { name: company, days })) as Parameters<typeof fmtBuzz>[0])
+    )
   )
 
   server.registerTool(
@@ -57,13 +57,9 @@ export function registerTools(server: McpServer): void {
         theme: z.string().max(100).optional().describe('Theme slug filter, e.g. "humanoid-robots"'),
       },
     },
-    async ({ days, theme }) => {
-      try {
-        return text(fmtFunding((await apiGet('/funding', { days, theme })) as Parameters<typeof fmtFunding>[0]))
-      } catch (e) {
-        return errText(e)
-      }
-    }
+    safe(async ({ days, theme }) =>
+      fmtFunding((await apiGet('/funding', { days, theme })) as Parameters<typeof fmtFunding>[0])
+    )
   )
 
   server.registerTool(
@@ -74,13 +70,9 @@ export function registerTools(server: McpServer): void {
         'Pass a list of company names (portfolio, CRM accounts, watchlist) and get back which ones had signals in the last 7/30 days. Up to 10 names keyless, 50 with a free key.',
       inputSchema: { names: z.array(z.string().min(1).max(200)).min(1).max(50).describe('Company names to check') },
     },
-    async ({ names }) => {
-      try {
-        return text(fmtCheck((await apiPost('/check-companies', { names })) as Parameters<typeof fmtCheck>[0]))
-      } catch (e) {
-        return errText(e)
-      }
-    }
+    safe(async ({ names }) =>
+      fmtCheck((await apiPost('/check-companies', { names })) as Parameters<typeof fmtCheck>[0])
+    )
   )
 
   server.registerTool(
@@ -91,13 +83,9 @@ export function registerTools(server: McpServer): void {
         'Machine-discovered AI market themes ranked emerging-first with 7-day signal volume — automated market-map discovery. Answers "what spaces are heating up right now?"',
       inputSchema: { maturity: z.enum(['emerging', 'established']).optional().describe('Filter by maturity (default: all, emerging first)') },
     },
-    async ({ maturity }) => {
-      try {
-        return text(fmtThemes((await apiGet('/themes', { maturity })) as Parameters<typeof fmtThemes>[0]))
-      } catch (e) {
-        return errText(e)
-      }
-    }
+    safe(async ({ maturity }) =>
+      fmtThemes((await apiGet('/themes', { maturity })) as Parameters<typeof fmtThemes>[0])
+    )
   )
 
   server.registerTool(
@@ -108,13 +96,9 @@ export function registerTools(server: McpServer): void {
         'Profile of an AI company from the Teahose intel graph: what it does, sector, themes, and recent funding/product/hiring/mention signals.',
       inputSchema: { company: z.string().min(1).max(200).describe('Company name, e.g. "Anthropic"') },
     },
-    async ({ company }) => {
-      try {
-        return text(fmtCompany((await apiGet('/company', { name: company })) as Parameters<typeof fmtCompany>[0]))
-      } catch (e) {
-        return errText(e)
-      }
-    }
+    safe(async ({ company }) =>
+      fmtCompany((await apiGet('/company', { name: company })) as Parameters<typeof fmtCompany>[0])
+    )
   )
 
   server.registerTool(
@@ -125,12 +109,8 @@ export function registerTools(server: McpServer): void {
         'Subscribe to daily email alerts whenever a company has new signals (funding, product, hires, mentions). Requires a free Teahose API key (https://www.teahose.com/mcp) — the key holder\'s email receives the alerts.',
       inputSchema: { company: z.string().min(1).max(200).describe('Company name to watch') },
     },
-    async ({ company }) => {
-      try {
-        return text(fmtWatch((await apiPost('/watch', { name: company })) as Parameters<typeof fmtWatch>[0]))
-      } catch (e) {
-        return errText(e)
-      }
-    }
+    safe(async ({ company }) =>
+      fmtWatch((await apiPost('/watch', { name: company })) as Parameters<typeof fmtWatch>[0])
+    )
   )
 }

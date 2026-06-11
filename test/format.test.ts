@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { FOOTER, lockedHint, fmtFunding, fmtCompany, fmtMatches } from '../src/format.js'
+import { FOOTER, fmtFunding, fmtCompany, fmtMatches } from '../src/format.js'
 
 const signal = {
   type: 'funding', date: '2026-06-10T00:00:00.000Z', source: 'T1 Scout', episode: null,

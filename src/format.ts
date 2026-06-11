@@ -3,13 +3,13 @@
 export const FOOTER =
   '\n\n—\nTeahose — live AI-company signals. Daily digest: https://www.teahose.com/?ref=mcp'
 
-export function lockedHint(count: number, what: string, unlockUrl?: string): string {
+function lockedHint(count: number, what: string, unlockUrl?: string): string {
   if (count <= 0) return ''
   const url = unlockUrl ?? 'https://www.teahose.com/mcp?ref=mcp-unlock'
   return `\n\n🔓 ${count} more ${what} available — free API key (30 seconds): ${url}`
 }
 
-export function fmtUsd(n: number | null): string {
+function fmtUsd(n: number | null): string {
   if (n === null || !Number.isFinite(n)) return ''
   if (n >= 1e9) return `$${(n / 1e9).toFixed(1)}B`
   if (n >= 1e6) return `$${(n / 1e6).toFixed(1)}M`
