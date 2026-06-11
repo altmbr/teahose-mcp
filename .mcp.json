@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "teahose": {
+      "command": "npx",
+      "args": ["-y", "teahose-mcp@latest"]
+    }
+  }
+}

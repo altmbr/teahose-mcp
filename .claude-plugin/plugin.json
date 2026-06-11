@@ -1,0 +1,10 @@
+{
+  "name": "teahose",
+  "version": "0.1.0",
+  "description": "Live AI-company intelligence — funding signals, lookalike search, podcast/newsletter buzz, emerging themes from the Teahose intel graph.",
+  "author": { "name": "Bryan Altman", "url": "https://www.teahose.com" },
+  "homepage": "https://www.teahose.com/mcp",
+  "repository": "https://github.com/altmbr/teahose-mcp",
+  "license": "MIT",
+  "keywords": ["mcp", "ai-companies", "market-intelligence", "funding", "startups", "vc"]
+}
