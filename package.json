@@ -1,0 +1,28 @@
+{
+  "name": "teahose-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for live AI-company intelligence — funding signals, lookalike search, podcast/newsletter buzz, and emerging themes from teahose.com",
+  "license": "MIT",
+  "author": "Bryan Altman (https://www.teahose.com)",
+  "repository": { "type": "git", "url": "git+https://github.com/altmbr/teahose-mcp.git" },
+  "homepage": "https://www.teahose.com/mcp",
+  "keywords": ["mcp", "modelcontextprotocol", "ai-companies", "market-intelligence", "funding", "startups", "claude"],
+  "type": "module",
+  "bin": { "teahose-mcp": "dist/index.js" },
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build && npm test",
+    "test": "vitest run",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0",
+    "vitest": "^4.0.0"
+  }
+}
