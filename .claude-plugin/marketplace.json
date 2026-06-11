@@ -1,0 +1,11 @@
+{
+  "name": "teahose-mcp",
+  "owner": { "name": "Bryan Altman", "url": "https://www.teahose.com" },
+  "plugins": [
+    {
+      "name": "teahose",
+      "source": "./",
+      "description": "Live AI-company intelligence — funding signals, lookalike search, podcast/newsletter buzz, emerging themes from the Teahose intel graph."
+    }
+  ]
+}

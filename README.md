@@ -6,6 +6,13 @@ Live AI-company intelligence for Claude — funding signals, lookalike search, p
 claude mcp add teahose -- npx -y teahose-mcp
 ```
 
+Or install as a Claude Code plugin (this repo doubles as a plugin marketplace):
+
+```
+/plugin marketplace add altmbr/teahose-mcp
+/plugin install teahose@teahose-mcp
+```
+
 ---
 
 ## Tools
