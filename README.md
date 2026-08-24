@@ -1,6 +1,6 @@
 # teahose-mcp
 
-Live AI-company intelligence for Claude — funding signals, lookalike search, podcast/newsletter buzz, and emerging market themes, all drawn from the [Teahose](https://www.teahose.com) intel graph. No API key required to start; a free key unlocks higher rate limits and daily-email alerts.
+Live AI-company intelligence for Claude — funding signals, lookalike search, podcast/newsletter buzz, and emerging market themes, all drawn from the [Teahose](https://www.teahose.com) intel graph. Requires a free API key — 30 seconds, email only.
 
 ```bash
 claude mcp add teahose -- npx -y teahose-mcp
@@ -25,7 +25,7 @@ Or install as a Claude Code plugin (this repo doubles as a plugin marketplace):
 | `check_companies` | Batch-check a list of company names (portfolio, CRM, watchlist) to see which had signals in the last 7 or 30 days. |
 | `emerging_themes` | Machine-discovered AI market themes ranked emerging-first with 7-day signal volume. |
 | `get_company` | Profile of an AI company: what it does, sector, themes, and recent funding/product/hiring/mention signals. |
-| `watch_company` | Subscribe to daily email alerts whenever a company has new signals. Requires a free API key. |
+| `watch_company` | Subscribe to daily email alerts whenever a company has new signals. |
 
 ---
 
@@ -37,26 +37,29 @@ This server is a thin, read-only HTTP client. A security review should find:
 - **No filesystem or shell access:** The server does not read, write, or execute anything on the local filesystem.
 - **No exec / child processes:** No `child_process`, `eval`, or dynamic code execution of any kind.
 - **No telemetry:** The server emits no analytics, crash reports, or tracking beyond the API calls themselves. The API calls are subject to [Teahose's privacy policy](https://www.teahose.com).
-- **Credential scope:** The only credential is the optional `TEAHOSE_API_KEY` environment variable. It is sent solely to `teahose.com` in an `x-teahose-key` request header.
+- **Credential scope:** The only credential is the `TEAHOSE_API_KEY` environment variable. It is sent solely to `teahose.com` in an `x-teahose-key` request header.
 - **Dependencies:** Exactly two runtime dependencies — `@modelcontextprotocol/sdk` and `zod`. No native addons.
 - **No postinstall scripts:** `package.json` has no `install`, `postinstall`, or `prepare` hooks.
-- **All tools are read-only** except `watch_company` (which writes a watch subscription on teahose.com) and requires a valid API key.
+- **All tools are read-only** except `watch_company`, which writes a watch subscription on teahose.com.
 
 ---
 
-## Free Tier vs. Free Key
+## The Free Key
 
-A free Teahose API key is available at **https://www.teahose.com/mcp**. Getting a key also subscribes you to the Teahose daily-digest email (unsubscribe any time).
+Grab one at **https://www.teahose.com/mcp** — it's free and only needs an email. Anonymous
+(no-key) access was retired in August 2026: it was unattributable, so we couldn't tell one
+caller from another or reach anyone whose usage broke. Getting a key also subscribes you to
+the Teahose daily-digest email (unsubscribe any time).
 
-| Limit | Keyless | Free key |
-|-------|---------|----------|
-| Requests / minute | 10 | 30 |
-| Requests / day | 50 | 1,000 |
-| Company signals returned | 5 | 25 |
-| Buzz mentions returned | 5 | 25 |
-| Funding rows returned | 15 (max 14-day window) | 50 (max 30-day window) |
-| `check_companies` names | 10 | 50 |
-| `find_companies` matches | 3 | 15 |
+| Limit | Free key |
+|-------|----------|
+| Requests / minute | 30 |
+| Requests / day | 1,000 |
+| Company signals returned | 25 |
+| Buzz mentions returned | 25 |
+| Funding rows returned | 50 (max 30-day window) |
+| `check_companies` names | 50 |
+| `find_companies` matches | 15 |
 
 ---
 
@@ -64,7 +67,7 @@ A free Teahose API key is available at **https://www.teahose.com/mcp**. Getting 
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `TEAHOSE_API_KEY` | No | Free key from https://www.teahose.com/mcp. Unlocks higher limits and `watch_company`. |
+| `TEAHOSE_API_KEY` | **Yes** | Free key from https://www.teahose.com/mcp. Calls without it return HTTP 401. |
 | `TEAHOSE_API_URL` | No | Override the API base URL (useful for local testing against a dev server). |
 
 ### Setting your key in Claude Code
